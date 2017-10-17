@@ -59,13 +59,13 @@ export class CarService {
         }).catch(this.handleErrors);
     }
 
-    update(carModel: Car): Promise<any> {
+    async update(carModel: Car): Promise<any> {
         const updateModel = CarService.cloneUpdateModel(carModel);
 
         return firebase.update("/cars/" + carModel.id, updateModel);
     }
 
-    uploadImage(remoteFullPath: string, localFullPath: string): Promise<any> {
+    async uploadImage(remoteFullPath: string, localFullPath: string): Promise<any> {
         return firebase.uploadFile({
             localFullPath,
             remoteFullPath,

@@ -121,56 +121,60 @@ export class CarDetailEditComponent implements OnInit {
         /* ***********************************************************
         * By design this app is set up to work with read-only sample data.
         * Follow the steps in the "Firebase database setup" section in app/readme.md file
-        * and uncomment the code block below to make it editable.
+        * and uncomment the code statement below to make it editable.
         *************************************************************/
+        // this.updateCar();
 
         /* ***********************************************************
-        let queue = Promise.resolve();
+        * Comment out the code statement below if you made the app editable.
+        *************************************************************/
+        this.updateCarReadOnly();
+    }
 
+    private async updateCar(): Promise<any> {
         this._isUpdating = true;
 
-        if (this._isCarImageDirty && this._car.imageUrl) {
-            queue = queue
-                .then(() => this._carService.uploadImage(this._car.imageStoragePath, this._car.imageUrl))
-                .then((uploadedFile: any) => {
-                    this._car.imageUrl = uploadedFile.url;
-                });
+        try {
+            if (this._isCarImageDirty && this._car.imageUrl) {
+                const uploadedFile = await this._carService.uploadImage(this._car.imageStoragePath, this._car.imageUrl);
+                this._car.imageUrl = uploadedFile.url;
+            }
+
+            await this._carService.update(this._car);
+        } catch (errorMessage) {
+            this._isUpdating = false;
+
+            const message = "Something went wrong. Please try again.";
+            await alert({ title: "Oops!", message, okButtonText: "Ok" });
+
+            return;
         }
 
-        queue.then(() => this._carService.update(this._car))
-            .then(() => {
-                this._isUpdating = false;
-                this._routerExtensions.navigate(["/cars"], {
-                    clearHistory: true,
-                    animated: true,
-                    transition: {
-                        name: "slideBottom",
-                        duration: 200,
-                        curve: "ease"
-                    }
-                });
-            })
-            .catch((errorMessage: any) => {
-                this._isUpdating = false;
-                alert({ title: "Oops!", message: "Something went wrong. Please try again.", okButtonText: "Ok" });
-            });
-        *************************************************************/
+        this._isUpdating = false;
+        this._routerExtensions.navigate(["/cars"], {
+            clearHistory: true,
+            animated: true,
+            transition: {
+                name: "slideBottom",
+                duration: 200,
+                curve: "ease"
+            }
+        });
+    }
 
-        /* ***********************************************************
-        * Comment out the code block below if you made the app editable.
-        *************************************************************/
+    private async updateCarReadOnly(): Promise<any> {
         const readOnlyMessage = "Check out the \"Firebase database setup\" section in the readme file to make it editable."; // tslint:disable-line:max-line-length
-        const queue = Promise.resolve();
-        queue.then(() => alert({ title: "Read-Only Template!", message: readOnlyMessage, okButtonText: "Ok" }))
-            .then(() => this._routerExtensions.navigate(["/cars"], {
-                clearHistory: true,
-                animated: true,
-                transition: {
-                    name: "slideBottom",
-                    duration: 200,
-                    curve: "ease"
-                }
-            }));
+        await alert({ title: "Read-Only Template!", message: readOnlyMessage, okButtonText: "Ok" });
+
+        this._routerExtensions.navigate(["/cars"], {
+            clearHistory: true,
+            animated: true,
+            transition: {
+                name: "slideBottom",
+                duration: 200,
+                curve: "ease"
+            }
+        });
     }
 
     private initializeEditOptions(): void {

@@ -3,6 +3,7 @@ npm-debug.log
 
 *.js.map
 **/*.js
+!shared/async-function-helpers.js
 !tools/*.js
 **/*.css
 hooks/

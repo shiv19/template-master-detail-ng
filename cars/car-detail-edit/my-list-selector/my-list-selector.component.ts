@@ -48,6 +48,10 @@ export class MyListSelectorComponent implements OnInit {
     }
 
     onSelectorTap(): void {
+        this.selectValue();
+    }
+
+    private async selectValue(): Promise<any> {
         const title = `Select Car ${capitalizeFirstLetter(this.tag)}`;
         const selectedIndex = this.items.indexOf(this.selectedValue);
         const options: ModalDialogOptions = {
@@ -60,12 +64,10 @@ export class MyListSelectorComponent implements OnInit {
             fullscreen: false
         };
 
-        this._modalService.showModal(MyListSelectorModalViewComponent, options)
-            .then((selectedValue: string) => {
-                if (selectedValue) {
-                    this.selectedValue = selectedValue;
-                    this.selectedValueChange.emit(this.selectedValue);
-                }
-            });
+        const selectedValue: string = await this._modalService.showModal(MyListSelectorModalViewComponent, options);
+        if (selectedValue) {
+            this.selectedValue = selectedValue;
+            this.selectedValueChange.emit(this.selectedValue);
+        }
     }
 }

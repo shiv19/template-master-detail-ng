@@ -1,6 +1,9 @@
 // this import should be first in order to load some required settings (like globals and reflect-metadata)
 import { platformNativeScript } from "nativescript-angular/platform-static";
 
+// enable ES8 async function support
+require("./shared/async-function-helpers");
+
 import { AppModuleNgFactory } from "./app.module.ngfactory";
 
 /* ***********************************************************

@@ -78,20 +78,23 @@ export class MyImageAddRemoveComponent implements ControlValueAccessor {
         this.pickImage();
     }
 
-    pickImage(): void {
+    async pickImage(): Promise<any> {
         const context = imagePicker.create({
             mode: "single"
         });
 
-        context
-            .authorize()
-            .then(() => context.present())
-            .then((selection) => selection.forEach(
-                (selectedAsset: imagePicker.SelectedAsset) => {
-                    selectedAsset.getImage({ maxHeight: 768 })
-                        .then((imageSource: ImageSource) => this.handleImageChange(imageSource));
-                })
-            ).catch((errorMessage: any) => console.log(errorMessage));
+        try {
+            await context.authorize();
+
+            const selection: Array<imagePicker.SelectedAsset> = await context.present();
+            selection.forEach(
+                async (selectedAsset: imagePicker.SelectedAsset) => {
+                    const imageSource: ImageSource = await selectedAsset.getImage({ maxHeight: 768 });
+                    this.handleImageChange(imageSource);
+                });
+        } catch (errorMessage) {
+            console.log(errorMessage);
+        }
     }
 
     private handleImageChange(source: ImageSource): void {
